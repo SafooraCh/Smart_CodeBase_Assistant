@@ -1,3 +1,5 @@
+# Smart_CodeBase_Assistant
+
 # Smart Codebase & Tech Stack Knowledge Assistant
 
 A local AI assistant for understanding a codebase. Upload a project as a zip, and it reads the code, breaks it into chunks, and lets you search or chat with it — all running locally.
