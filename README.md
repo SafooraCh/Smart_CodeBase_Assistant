@@ -60,8 +60,6 @@ Set via environment variables in app/config.py — things like OLLAMA_MODEL, QDR
 
 **Done:** upload, chunking, embeddings, storage, search, and chat with citations.
 
-**Next:** a frontend, multi-project support, streaming responses.
-
 ## Why
 
 A fully local assistant that answers questions about your code using your actual code — nothing made up, nothing leaves your machine.
