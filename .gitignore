@@ -1,7 +1,6 @@
-data/uploads/*
-data/db/*
-!data/uploads/.gitkeep
-!data/db/.gitkeep
-__pycache__/
-*.pyc
+venv/
 .venv/
+.env
+.env.*
+!.env.example
+__pycache__/
