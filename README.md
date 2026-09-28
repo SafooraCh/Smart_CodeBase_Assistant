@@ -1,62 +1,83 @@
-# Smart Codebase & Tech Stack Knowledge Assistant
+# Smart Codebase Assistant
 
-A local AI assistant for understanding a codebase. Upload a project as a zip, and it reads the code, breaks it into chunks, and lets you search or chat with it — all running locally.
+This project helps developers understand their code.
 
-## What it does
+You can upload a project ZIP file, select the project, and ask questions about its code. The system finds relevant code from the selected project and gives an answer with file references.
 
-- Upload a project zip
-- Cleans out junk like node_modules, .git, venv, build folders
-- Splits the code into chunks and embeds them
-- Saves everything to SQLite + Qdrant
-- You can search the code or just ask it questions
-- Answers come with the file/lines they're based on — if it can't find anything, it tells you instead of guessing
-- You can also list indexed files, view a file's chunks, read a file back, or delete it
+## Features
 
-## How it works
+- Upload a project ZIP file
+- Split code into smaller parts
+- Create embeddings for searching
+- Store embeddings in Qdrant Cloud
+- Store file details in SQLite
+- Search code by asking a question
+- Select a project before asking questions
+- Get AI answers about the selected project with file references
+- View and delete indexed files
 
-1. Upload a zip, it gets unzipped.
-2. Only real code/docs files are kept (.py, .js, .ts, .md, .json, .yaml, .yml, .txt).
-3. Files get split into chunks with file path + line numbers attached.
-4. Chunks get embedded and stored.
-5. When you ask something, it finds the closest matching chunks and gives them to a local LLM (Ollama) to answer from — nothing outside that context.
+## Tools Used
 
-## Tech stack
+- Python and FastAPI — backend
+- Groq API — AI answers
+- `openai/gpt-oss-20b` — language model
+- Sentence Transformers — embeddings
+- Qdrant Cloud — vector storage
+- SQLite — file details
+- Docker and Docker Compose — running the project
 
-Python, FastAPI, SQLite, Qdrant, sentence-transformers, LangChain, Ollama, Docker.
+## How It Works
 
-## API
+1. Upload your project as a ZIP file.
+2. The system reads supported files and splits them into small parts.
+3. It creates embeddings and saves them in Qdrant Cloud.
+4. Select the project you want to ask about.
+5. Enter your question about that project.
+6. The system finds useful code from the selected project and sends it to Groq.
+7. You get an answer with file references.
 
-| Method | Endpoint | What it does |
-|---|---|---|
-| `GET` | `/` | Status check |
-| `GET` | `/health` | Checks API, Qdrant, Ollama are up |
-| `POST` | `/codebase/index` | Upload + index a zip |
-| `GET` | `/codebase/files` | List indexed files |
-| `GET` | `/codebase/projects` | List indexed projects |
-| `GET` | `/codebase/files/{file_id}` | Get a file's metadata + chunks |
-| `GET` | `/codebase/files/{file_id}/text` | Get a file's full text |
-| `DELETE` | `/codebase/files/{file_id}` | Remove a file |
-| `POST` | `/search` | Search the code |
-| `POST` | `/chat` | Ask a question, get a cited answer |
+## Run the Project
 
-Full docs at /docs once it's running.
-
-## Running it
-
-Install Docker Desktop and Ollama first.
+1. Install Docker and start it.
+2. Add your Groq API key, Qdrant Cloud URL, and Qdrant API key to the environment settings used by Docker Compose.
+3. Open a terminal in the project folder and run:
 
 ```bash
-ollama pull llama3:8b
 docker compose up --build
 ```
 
-Then open `http://localhost:8000/docs` and try it out.
+4. Open this link to test the APIs:
 
-## Config
+[http://localhost:8000/docs](http://localhost:8000/docs)
 
-Set via environment variables in app/config.py — things like OLLAMA_MODEL, QDRANT_HOST, SEARCH_TOP_K, etc. Defaults work out of the box for local dev.
+Use the upload endpoint first. For chat, select your project and then enter your question.
 
-## Status
+Keep your API keys private. Internet is needed to connect to Groq and Qdrant Cloud.
 
-**Done:** upload, chunking, embeddings, storage, search, and chat with citations.
+## Main APIs
 
+| Method | API | Purpose |
+|---|---|---|
+| POST | `/codebase/index` | Upload a ZIP |
+| GET | `/codebase/files` | View indexed files |
+| GET | `/codebase/files/{file_id}` | View file details |
+| DELETE | `/codebase/files/{file_id}` | Delete a file from the index |
+| POST | `/search` | Search code |
+| POST | `/chat` | Ask about the selected project |
+| GET | `/health` | Check service status |
+
+## Chat Example
+
+1. Select your project, for example `mini_shop`.
+2. Ask: “How does this project connect to the database?”
+3. The assistant answers using code from `mini_shop`.
+
+The chat request includes the selected project along with the question. Use the project field shown in your updated API; its exact field name is not confirmed in the shared ZIP.
+
+## Current Setup
+
+FastAPI runs in Docker on port **8000**. Groq generates answers, Qdrant Cloud stores embeddings, and SQLite stores file details.
+
+A local Qdrant container is also defined in Docker Compose. It is separate from Qdrant Cloud.
+
+This README describes the updated setup. The shared ZIP contains the older Ollama code, so use the updated Groq and Qdrant Cloud files to run this version.
